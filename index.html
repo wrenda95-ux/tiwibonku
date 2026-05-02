@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twibbon Final App</title>
+  <title>Twibbon Final Stable</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -23,99 +23,62 @@
       touch-action:none;
     }
 
-    .toolbar{
+    .wrap{
+      padding:10px;
+      padding-bottom:80px;
+    }
+
+    .btn{
+      padding:12px;
+      margin:5px;
+      border:none;
+      border-radius:8px;
+      background:#2196F3;
+      color:white;
+      font-size:14px;
+    }
+
+    .btn.gray{ background:#777; }
+    .btn.red{ background:#e53935; }
+
+    .bar{
       position:fixed;
       bottom:0;
       left:0;
       right:0;
       display:flex;
       background:white;
-      padding:10px;
       box-shadow:0 -2px 10px rgba(0,0,0,0.1);
-      gap:5px;
+      padding:8px;
     }
 
-    .btn{
+    .bar button{
       flex:1;
-      padding:10px;
-      border:none;
-      border-radius:8px;
-      font-size:12px;
-      color:white;
-      background:#2196F3;
-    }
-
-    .btn.gray{ background:#777; }
-    .btn.red{ background:#e53935; }
-
-    .container{
-      padding:10px;
-      padding-bottom:80px;
-    }
-
-    /* popup */
-    .popup{
-      display:none;
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      bottom:0;
-      background:rgba(0,0,0,0.5);
-      justify-content:center;
-      align-items:center;
-    }
-
-    .popup-content{
-      background:white;
-      padding:20px;
-      border-radius:10px;
-      width:80%;
-    }
-
-    .popup button{
-      width:100%;
-      margin:5px 0;
-      padding:10px;
-      border:none;
-      border-radius:8px;
-      background:#2196F3;
-      color:white;
+      margin:3px;
     }
   </style>
 </head>
 
 <body>
 
-<h3>Twibbon Final App</h3>
+<h3>Twibbon Final Stable</h3>
 
-<div class="container">
+<div class="wrap">
+
+<!-- 🔥 FIX PALING AMAN -->
+<input type="file" id="upload" accept="image/*"><br><br>
 
 <canvas id="canvas" width="500" height="500"></canvas>
 
 </div>
 
 <!-- TOOLBAR -->
-<div class="toolbar">
+<div class="bar">
   <button class="btn" onclick="zoomIn()">➕</button>
   <button class="btn" onclick="zoomOut()">➖</button>
   <button class="btn gray" onclick="centerImage()">🎯</button>
   <button class="btn red" onclick="resetAll()">🔄</button>
-  <button class="btn" onclick="openPopup()">📷</button>
   <button class="btn" id="downloadBtn">⬇</button>
-</div>
-
-<!-- POPUP PILIH FOTO -->
-<div class="popup" id="popup">
-  <div class="popup-content">
-    <h4>Pilih Sumber Foto</h4>
-
-    <button onclick="pickGallery()">📁 Galeri</button>
-    <button onclick="openCamera()">📸 Kamera</button>
-    <button onclick="closePopup()">❌ Batal</button>
-
-    <input type="file" id="upload" accept="image/*" style="display:none;">
-  </div>
 </div>
 
 <script>
@@ -136,29 +99,6 @@ let startY = 0;
 
 let ready = false;
 
-/* ================= POPUP ================= */
-function openPopup(){
-  document.getElementById("popup").style.display = "flex";
-}
-
-function closePopup(){
-  document.getElementById("popup").style.display = "none";
-}
-
-/* ================= GALERI ================= */
-function pickGallery(){
-  document.getElementById("upload").removeAttribute("capture");
-  document.getElementById("upload").click();
-  closePopup();
-}
-
-/* ================= KAMERA ================= */
-function openCamera(){
-  document.getElementById("upload").setAttribute("capture","environment");
-  document.getElementById("upload").click();
-  closePopup();
-}
-
 /* ================= UPLOAD ================= */
 document.getElementById("upload").addEventListener("change", function(e){
   if(!e.target.files[0]) return;
@@ -170,6 +110,7 @@ document.getElementById("upload").addEventListener("change", function(e){
 
     foto.onload = function(){
 
+      // auto fit
       scale = Math.max(
         canvas.width / foto.width,
         canvas.height / foto.height
@@ -301,7 +242,7 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
   a.download = "Twibbon-Hasil.png";
   a.click();
 
-  alert("Tersimpan di Download / Unduhan HP");
+  alert("Hasil sudah masuk folder Download / Unduhan HP");
 });
 </script>
 

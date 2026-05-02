@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twibbon Final Pro</title>
+  <title>Twibbon Final Fix</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -12,9 +12,7 @@
       background:#f2f2f2;
     }
 
-    h3{
-      margin:10px;
-    }
+    h3{ margin:10px; }
 
     canvas{
       border:1px solid #ccc;
@@ -28,19 +26,6 @@
       padding-bottom:90px;
     }
 
-    .btn{
-      padding:12px;
-      margin:5px;
-      border:none;
-      border-radius:8px;
-      background:#2196F3;
-      color:white;
-      font-size:14px;
-    }
-
-    .btn.gray{ background:#777; }
-    .btn.red{ background:#e53935; }
-
     .bar{
       position:fixed;
       bottom:0;
@@ -52,18 +37,28 @@
       padding:8px;
     }
 
-    .bar button{
+    .btn{
       flex:1;
+      margin:3px;
+      padding:10px;
+      border:none;
+      border-radius:8px;
+      font-size:13px;
+      color:white;
+      background:#2196F3;
     }
 
-    /* 🔥 PREVIEW */
+    .btn.gray{ background:#777; }
+    .btn.red{ background:#e53935; }
+
+    /* PREVIEW */
     #previewBox{
       display:none;
       position:fixed;
       top:0;left:0;right:0;bottom:0;
       background:rgba(0,0,0,0.85);
-      padding:20px;
       text-align:center;
+      padding:20px;
     }
 
     #previewBox img{
@@ -80,7 +75,7 @@
 
 <body>
 
-<h3>Twibbon Final Pro</h3>
+<h3>Twibbon Final Fix</h3>
 
 <div class="wrap">
 
@@ -263,29 +258,27 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
 
   const imgData = canvas.toDataURL("image/png");
 
-  // tampilkan preview
   document.getElementById("previewImg").src = imgData;
   document.getElementById("previewBox").style.display = "block";
 
-  // auto download
   const a = document.createElement("a");
   a.href = imgData;
   a.download = "Twibbon-Hasil.png";
   a.click();
 });
 
-/* ================= SHARE ================= */
+/* ================= SHARE FIX (NO ERROR WHATSAPP) ================= */
 function shareImage(){
-  const imgData = document.getElementById("previewImg").src;
 
-  // ubah base64 ke file
-  fetch(imgData)
+  const img = document.getElementById("previewImg").src;
+
+  fetch(img)
     .then(res => res.blob())
     .then(blob => {
+
       const file = new File([blob], "twibbon.png", {type:"image/png"});
 
-      // 🔥 CEK SUPPORT
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      if(navigator.canShare && navigator.canShare({files:[file]})){
 
         navigator.share({
           title: "Hasil Twibbon",
@@ -295,19 +288,13 @@ function shareImage(){
 
       } else {
 
-        // 🔥 FALLBACK UNTUK HP YANG TIDAK SUPPORT SHARE FILE
-        const url = URL.createObjectURL(blob);
+        // fallback aman (tidak error "pesan kosong")
+        const text = "Hasil Twibbon saya 🎉 Silakan download dari layar ini.";
 
-        document.getElementById("previewBox").innerHTML += `
-          <br><br>
-          <a href="https://wa.me/?text=Hasil%20Twibbon%20saya%20ini:%20${encodeURIComponent(url)}"
-             target="_blank"
-             style="color:white; background:green; padding:10px; display:inline-block; border-radius:8px;">
-             📤 Share ke WhatsApp
-          </a>
-        `;
-
-        alert("HP kamu tidak support share langsung. Gunakan tombol WhatsApp.");
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(text),
+          "_blank"
+        );
       }
     });
 }

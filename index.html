@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twibbon Final Stable</title>
+  <title>Twibbon Final Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -25,7 +25,7 @@
 
     .wrap{
       padding:10px;
-      padding-bottom:80px;
+      padding-bottom:90px;
     }
 
     .btn{
@@ -54,18 +54,36 @@
 
     .bar button{
       flex:1;
-      margin:3px;
+    }
+
+    /* 🔥 PREVIEW */
+    #previewBox{
+      display:none;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.85);
+      padding:20px;
+      text-align:center;
+    }
+
+    #previewBox img{
+      max-width:90%;
+      border-radius:10px;
+    }
+
+    #previewBox button{
+      padding:10px 15px;
+      margin:5px;
     }
   </style>
 </head>
 
 <body>
 
-<h3>Twibbon Final Stable</h3>
+<h3>Twibbon Final Pro</h3>
 
 <div class="wrap">
 
-<!-- 🔥 FIX PALING AMAN -->
 <input type="file" id="upload" accept="image/*"><br><br>
 
 <canvas id="canvas" width="500" height="500"></canvas>
@@ -79,6 +97,15 @@
   <button class="btn gray" onclick="centerImage()">🎯</button>
   <button class="btn red" onclick="resetAll()">🔄</button>
   <button class="btn" id="downloadBtn">⬇</button>
+</div>
+
+<!-- PREVIEW -->
+<div id="previewBox">
+  <h3 style="color:white;">Hasil Twibbon</h3>
+  <img id="previewImg">
+  <br><br>
+  <button onclick="shareImage()">📤 Share</button>
+  <button onclick="closePreview()">❌ Tutup</button>
 </div>
 
 <script>
@@ -110,7 +137,6 @@ document.getElementById("upload").addEventListener("change", function(e){
 
     foto.onload = function(){
 
-      // auto fit
       scale = Math.max(
         canvas.width / foto.width,
         canvas.height / foto.height
@@ -227,7 +253,7 @@ function resetAll(){
   draw();
 }
 
-/* ================= DOWNLOAD ================= */
+/* ================= DOWNLOAD + PREVIEW ================= */
 document.getElementById("downloadBtn").addEventListener("click", ()=>{
 
   if(!ready){
@@ -235,15 +261,42 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
     return;
   }
 
-  const img = canvas.toDataURL("image/png");
+  const imgData = canvas.toDataURL("image/png");
 
+  // tampilkan preview
+  document.getElementById("previewImg").src = imgData;
+  document.getElementById("previewBox").style.display = "block";
+
+  // auto download
   const a = document.createElement("a");
-  a.href = img;
+  a.href = imgData;
   a.download = "Twibbon-Hasil.png";
   a.click();
-
-  alert("Hasil sudah masuk folder Download / Unduhan HP");
 });
+
+/* ================= SHARE ================= */
+function shareImage(){
+  const img = document.getElementById("previewImg").src;
+
+  if(navigator.share){
+    fetch(img)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], "twibbon.png", {type:"image/png"});
+
+        navigator.share({
+          title: "Hasil Twibbon",
+          files: [file]
+        });
+      });
+  } else {
+    alert("Share tidak didukung di HP ini, silakan simpan manual.");
+  }
+}
+
+function closePreview(){
+  document.getElementById("previewBox").style.display = "none";
+}
 </script>
 
 </body>

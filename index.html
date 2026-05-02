@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twibbon Pro HP</title>
+  <title>Twibbon Final HP Fix</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -19,24 +19,34 @@
       background:#f5f5f5;
     }
 
-    button{
-      padding:10px 12px;
+    .btn{
+      padding:12px 16px;
       margin:5px;
+      font-size:16px;
+      border:none;
+      border-radius:8px;
+      background:#2196F3;
+      color:white;
+    }
+
+    .btn:active{
+      transform:scale(0.95);
     }
   </style>
 </head>
 
 <body>
 
-<h3>Twibbon Pro Upload</h3>
+<h3>Twibbon HP Final</h3>
 
-<input type="file" id="upload"><br><br>
+<!-- 🔥 FIX HP UPLOAD -->
+<input type="file" id="upload" accept="image/*" capture="environment"><br><br>
 
 <canvas id="canvas" width="500" height="500"></canvas><br>
 
-<button onclick="zoomIn()">+</button>
-<button onclick="zoomOut()">-</button>
-<button id="downloadBtn">Download</button>
+<button class="btn" onclick="zoomIn()">➕ Zoom In</button>
+<button class="btn" onclick="zoomOut()">➖ Zoom Out</button>
+<button class="btn" id="downloadBtn">⬇ Download</button>
 
 <script>
 const canvas = document.getElementById("canvas");
@@ -56,8 +66,11 @@ let startY = 0;
 
 let ready = false;
 
-/* ================= UPLOAD ================= */
+/* ================= UPLOAD FIX ================= */
 document.getElementById("upload").addEventListener("change", function(e){
+
+  if(!e.target.files[0]) return;
+
   const reader = new FileReader();
 
   reader.onload = function(event){
@@ -65,7 +78,7 @@ document.getElementById("upload").addEventListener("change", function(e){
 
     foto.onload = function(){
 
-      // 🔥 AUTO CENTER FOTO
+      // 🔥 auto fit ke canvas
       scale = Math.max(
         canvas.width / foto.width,
         canvas.height / foto.height
@@ -75,7 +88,8 @@ document.getElementById("upload").addEventListener("change", function(e){
       posY = (canvas.height - foto.height * scale) / 2;
 
       ready = true;
-      draw();
+
+      requestAnimationFrame(draw);
     };
 
     foto.src = event.target.result;
@@ -95,7 +109,7 @@ function draw(){
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 }
 
-/* ================= DRAG ================= */
+/* ================= DRAG LAPTOP ================= */
 canvas.addEventListener("mousedown", (e)=>{
   dragging = true;
   startX = e.offsetX - posX;
@@ -112,7 +126,7 @@ canvas.addEventListener("mousemove", (e)=>{
   }
 });
 
-/* ================= TOUCH ================= */
+/* ================= TOUCH HP ================= */
 let lastDist = null;
 
 canvas.addEventListener("touchstart", (e)=>{
@@ -142,6 +156,7 @@ canvas.addEventListener("touchmove", (e)=>{
     if(lastDist){
       const zoom = dist / lastDist;
       scale *= zoom;
+
       scale = Math.max(0.2, Math.min(6, scale));
       draw();
     }
@@ -168,8 +183,9 @@ function zoomOut(){
   draw();
 }
 
-/* ================= DOWNLOAD ================= */
+/* ================= DOWNLOAD FIX HP ================= */
 document.getElementById("downloadBtn").addEventListener("click", ()=>{
+
   if(!ready){
     alert("Upload foto dulu!");
     return;
@@ -179,8 +195,13 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
 
   const a = document.createElement("a");
   a.href = img;
-  a.download = "twibbon.png";
+  a.download = "Twibbon-Hasil.png";
+
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+
+  alert("Hasil sudah tersimpan di folder Download / Unduhan HP kamu");
 });
 </script>
 

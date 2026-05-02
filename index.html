@@ -276,22 +276,40 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
 
 /* ================= SHARE ================= */
 function shareImage(){
-  const img = document.getElementById("previewImg").src;
+  const imgData = document.getElementById("previewImg").src;
 
-  if(navigator.share){
-    fetch(img)
-      .then(res => res.blob())
-      .then(blob => {
-        const file = new File([blob], "twibbon.png", {type:"image/png"});
+  // ubah base64 ke file
+  fetch(imgData)
+    .then(res => res.blob())
+    .then(blob => {
+      const file = new File([blob], "twibbon.png", {type:"image/png"});
+
+      // 🔥 CEK SUPPORT
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
 
         navigator.share({
           title: "Hasil Twibbon",
+          text: "Ini hasil twibbon saya",
           files: [file]
         });
-      });
-  } else {
-    alert("Share tidak didukung di HP ini, silakan simpan manual.");
-  }
+
+      } else {
+
+        // 🔥 FALLBACK UNTUK HP YANG TIDAK SUPPORT SHARE FILE
+        const url = URL.createObjectURL(blob);
+
+        document.getElementById("previewBox").innerHTML += `
+          <br><br>
+          <a href="https://wa.me/?text=Hasil%20Twibbon%20saya%20ini:%20${encodeURIComponent(url)}"
+             target="_blank"
+             style="color:white; background:green; padding:10px; display:inline-block; border-radius:8px;">
+             📤 Share ke WhatsApp
+          </a>
+        `;
+
+        alert("HP kamu tidak support share langsung. Gunakan tombol WhatsApp.");
+      }
+    });
 }
 
 function closePreview(){

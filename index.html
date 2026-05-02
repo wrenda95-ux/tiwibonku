@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twibbon Final Fix</title>
+  <title>Twibbon Final Stable</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -51,11 +51,10 @@
     .btn.gray{ background:#777; }
     .btn.red{ background:#e53935; }
 
-    /* PREVIEW */
     #previewBox{
       display:none;
       position:fixed;
-      top:0;left:0;right:0;bottom:0;
+      inset:0;
       background:rgba(0,0,0,0.85);
       text-align:center;
       padding:20px;
@@ -69,13 +68,15 @@
     #previewBox button{
       padding:10px 15px;
       margin:5px;
+      border:none;
+      border-radius:8px;
     }
   </style>
 </head>
 
 <body>
 
-<h3>Twibbon Final Fix</h3>
+<h3>Twibbon Final Stable</h3>
 
 <div class="wrap">
 
@@ -99,7 +100,8 @@
   <h3 style="color:white;">Hasil Twibbon</h3>
   <img id="previewImg">
   <br><br>
-  <button onclick="shareImage()">📤 Share</button>
+  <button onclick="downloadAgain()">📥 Download</button>
+  <button onclick="shareWA()">📤 WhatsApp</button>
   <button onclick="closePreview()">❌ Tutup</button>
 </div>
 
@@ -223,16 +225,8 @@ canvas.addEventListener("touchend", ()=>{
 });
 
 /* ================= TOOLS ================= */
-function zoomIn(){
-  scale += 0.1;
-  draw();
-}
-
-function zoomOut(){
-  scale -= 0.1;
-  scale = Math.max(0.2, scale);
-  draw();
-}
+function zoomIn(){ scale += 0.1; draw(); }
+function zoomOut(){ scale = Math.max(0.2, scale - 0.1); draw(); }
 
 function centerImage(){
   if(!ready) return;
@@ -248,7 +242,7 @@ function resetAll(){
   draw();
 }
 
-/* ================= DOWNLOAD + PREVIEW ================= */
+/* ================= DOWNLOAD ================= */
 document.getElementById("downloadBtn").addEventListener("click", ()=>{
 
   if(!ready){
@@ -256,47 +250,38 @@ document.getElementById("downloadBtn").addEventListener("click", ()=>{
     return;
   }
 
-  const imgData = canvas.toDataURL("image/png");
+  const img = canvas.toDataURL("image/png");
 
-  document.getElementById("previewImg").src = imgData;
+  document.getElementById("previewImg").src = img;
   document.getElementById("previewBox").style.display = "block";
 
   const a = document.createElement("a");
-  a.href = imgData;
+  a.href = img;
   a.download = "Twibbon-Hasil.png";
   a.click();
 });
 
-/* ================= SHARE FIX (NO ERROR WHATSAPP) ================= */
-function shareImage(){
-
+/* ================= DOWNLOAD ULANG ================= */
+function downloadAgain(){
   const img = document.getElementById("previewImg").src;
 
-  fetch(img)
-    .then(res => res.blob())
-    .then(blob => {
+  const a = document.createElement("a");
+  a.href = img;
+  a.download = "Twibbon-Hasil.png";
+  a.click();
+}
 
-      const file = new File([blob], "twibbon.png", {type:"image/png"});
+/* ================= SHARE WA (AMAN) ================= */
+function shareWA(){
 
-      if(navigator.canShare && navigator.canShare({files:[file]})){
+  const text =
+`Hasil Twibbon saya 🎉
+Silakan download gambar dari layar ini.`;
 
-        navigator.share({
-          title: "Hasil Twibbon",
-          text: "Ini hasil twibbon saya",
-          files: [file]
-        });
-
-      } else {
-
-        // fallback aman (tidak error "pesan kosong")
-        const text = "Hasil Twibbon saya 🎉 Silakan download dari layar ini.";
-
-        window.open(
-          "https://wa.me/?text=" + encodeURIComponent(text),
-          "_blank"
-        );
-      }
-    });
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(text),
+    "_blank"
+  );
 }
 
 function closePreview(){
